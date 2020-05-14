@@ -15,7 +15,7 @@
 # limitations under the License.
 """ Multiple choice fine-tuning: utilities to work with multiple choice tasks of reading comprehension """
 
-
+import pandas as pd
 import csv
 import glob
 import json
@@ -248,6 +248,78 @@ class DataProcessor:
     def get_labels(self):
         """Gets the list of labels for this data set."""
         raise NotImplementedError()
+
+
+class StanceProcessor(DataProcessor):
+    def get_train_examples(self, data_dir):
+        """Gets a collection of `InputExample`s for the train set."""
+        # load English news stance data from Fake News Challenge (the first 70% rows)
+        # method 1: manually merge train_bodies and train_stances here
+        url = 'https://raw.githubusercontent.com/kz882/fnc-1/master/train_bodies.csv'
+        train_bodies = pd.read_csv(url)
+
+        url = 'https://raw.githubusercontent.com/kz882/fnc-1/master/train_stances.random.csv'
+        train_stances = pd.read_csv(url)
+
+        train = train_stances.merge(train_bodies, left_on='Body ID', right_on='Body ID')
+
+        '''
+        # method 2: read from csv locally
+        train = pd.read_csv('train.csv')
+        '''
+        train = train[train['Stance'] != "discuss"] 
+        train = train[:int(len(train)*0.7)]
+
+        train_examples = []
+        for (id, row) in train.iterrows():
+            input_example = InputExample(example_id=str(id), question=row['Headline'], contexts=row['articleBody'], label=row['Stance'], endings=['agree','disagree','unrelated'])
+            train_examples.append(input_example)
+
+        return train_examples
+
+    def get_dev_examples(self, data_dir):
+        """Gets a collection of `InputExample`s for the dev set."""
+        # load English news stance data from Fake News Challenge (the last 30% rows)
+        # method 1: manually merge train_bodies and train_stances here
+        url = 'https://raw.githubusercontent.com/kz882/fnc-1/master/train_bodies.csv'
+        train_bodies = pd.read_csv(url)
+
+        url = 'https://raw.githubusercontent.com/kz882/fnc-1/master/train_stances.random.csv'
+        train_stances = pd.read_csv(url)
+
+        train = train_stances.merge(train_bodies, left_on='Body ID', right_on='Body ID')
+
+        '''
+        # method 2: read from csv locally
+        train = pd.read_csv('train.csv')
+        '''
+        train = train[train['Stance'] != "discuss"]
+        train = train[int(len(train)*0.7):]
+        dev_examples = []
+        for (id, row) in train.iterrows():
+            input_example = InputExample(example_id=str(id), question=row['Headline'], contexts=row['articleBody'], label=row['Stance'], endings=['agree','disagree','unrelated'])
+            dev_examples.append(input_example)
+
+        return dev_examples
+
+    def get_test_examples(self, data_dir):
+        """Gets a collection of `InputExample`s for the test set."""
+        # load 
+        url = requests.get('https://doc-0g-78-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/5otus4mg51j69f99n47jgs0t374r46u3/1560607200000/09837260612050622056/*/0B6GhBwm5vaB2ekdlZW5WZnppb28?e=download')
+        csv_raw = StringIO(url.text)
+        test = pd.read_csv(csv_raw)
+
+        test_examples = []
+        for id, row in test:
+            input_example = InputExample(example_id=str(id), question=row['title1_zh'], contexts=row['title2_zh'])
+            test_examples.append(input_example)
+
+        return test_examples
+
+    def get_labels(self):
+        """Gets the list of labels for this data set."""
+        
+        return ["disagree", "unrelated", "agree"]
 
 
 class RaceProcessor(DataProcessor):
@@ -573,5 +645,5 @@ def convert_examples_to_features(
     return features
 
 
-processors = {"race": RaceProcessor, "swag": SwagProcessor, "arc": ArcProcessor, "syn": SynonymProcessor}
+processors = {"race": RaceProcessor, "swag": SwagProcessor, "arc": ArcProcessor, "syn": SynonymProcessor, "stance": StanceProcessor}
 MULTIPLE_CHOICE_TASKS_NUM_LABELS = {"race", 4, "swag", 4, "arc", 4, "syn", 5}

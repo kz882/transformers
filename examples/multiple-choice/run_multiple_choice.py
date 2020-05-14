@@ -23,6 +23,7 @@ from typing import Dict, Optional
 
 import numpy as np
 
+import transformers
 from transformers import (
     AutoConfig,
     AutoModelForMultipleChoice,
@@ -33,8 +34,7 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
-from utils_multiple_choice import MultipleChoiceDataset, Split, processors
-
+from utils_multiple_choice import MultipleChoiceDataset, Split, processors, StanceProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +69,8 @@ class DataTrainingArguments:
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
 
-    task_name: str = field(metadata={"help": "The name of the task to train on: " + ", ".join(processors.keys())})
+    # task_name: str = field(metadata={"help": "The name of the task to train on: " + ", ".join(processors.keys())})
+    task_name: str = field(metadata={"help": "The name of the task to train on: "})
     data_dir: str = field(metadata={"help": "Should contain the data files for the task."})
     max_seq_length: int = field(
         default=128,
