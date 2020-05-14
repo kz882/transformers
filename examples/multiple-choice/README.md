@@ -1,12 +1,16 @@
 #### Fine-tuning XLMRoberta on Stance Detection dataset
+
 Term Project for ML 4 NLU Spring 2020
 
 Team Members: Kailin Zheng, Andrew Lee, Daniel Chain
 
+Project reports:
 
 [ML for NLU: Project Proposal Ideas](https://docs.google.com/document/d/12sBCYTukK23mchlKxJwZbAb8vDIgQvKfEPZajhtlcFY/edit)
 
 ML for NLU: Paper
+
+Download the dataset:
 
 [Fake News Challenge - 1 github repo](https://github.com/FakeNewsChallenge/fnc-1)
 
@@ -20,6 +24,7 @@ Based on the script [`run_multiple_choice.py`]().
 First, make sure you install torch
 
 To run the script:
+
 python ./examples/multiple-choice/run_multiple_choice.py \
 --task_name stance \
 --model_name_or_path xlm-roberta \
@@ -29,7 +34,7 @@ python ./examples/multiple-choice/run_multiple_choice.py \
 --learning_rate 5e-5 \
 --num_train_epochs 3 \
 --max_seq_length 80 \
---output_dir models_bert/swag_base \
+--output_dir ./examples/multiple-choice \
 --per_gpu_eval_batch_size=16 \
 --per_gpu_train_batch_size=16 \
 --gradient_accumulation_steps 2 \
