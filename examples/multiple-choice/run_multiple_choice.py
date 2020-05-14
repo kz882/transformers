@@ -23,17 +23,19 @@ from typing import Dict, Optional
 
 import numpy as np
 
-import transformers
-from transformers import (
-    AutoConfig,
-    AutoModelForMultipleChoice,
-    AutoTokenizer,
-    EvalPrediction,
-    HfArgumentParser,
-    Trainer,
-    TrainingArguments,
-    set_seed,
-)
+# import transformers
+# from transformers import (
+#     AutoConfig,
+#     AutoModelForMultipleChoice,
+#     AutoTokenizer,
+#     EvalPrediction,
+#     HfArgumentParser,
+#     Trainer,
+#     TrainingArguments,
+#     set_seed,
+# )
+
+import AutoConfig,AutoModelForMultipleChoice,AutoTokenizer,EvalPrediction,HfArgumentParser,Trainer,TrainingArguments,set_seed
 from utils_multiple_choice import MultipleChoiceDataset, Split, processors, StanceProcessor
 
 logger = logging.getLogger(__name__)
